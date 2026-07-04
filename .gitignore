@@ -1,0 +1,22 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Кеш и данные рантайма
+*.cache.json
+best_specs.json
+ladder_history.json
+ratings_cache.json
+
+# Playwright / browser profile
+.pw-profile/
+
+# OS
+.DS_Store
+Thumbs.db
