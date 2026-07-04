@@ -19,10 +19,6 @@ log = logging.getLogger("roster")
 class Member:
     name: str
     class_name: str = ""
-    rank: str = "Raider"
-
-    def profile_url(self, realm: str = "") -> str:
-        return ""
 
 
 def load_local_roster(path: str) -> List[Member]:
@@ -43,12 +39,11 @@ def load_local_roster(path: str) -> List[Member]:
             if not name:
                 continue
             class_name = parts[1] if len(parts) > 1 and parts[1] else ""
-            rank = parts[2] if len(parts) > 2 and parts[2] else "Raider"
             key = name.lower()
             if key in seen:
                 continue
             seen.add(key)
-            members.append(Member(name=name, class_name=class_name, rank=rank))
+            members.append(Member(name=name, class_name=class_name))
     if not members:
         raise RuntimeError(
             f"В файле ростера {path} нет ни одного игрока. Впиши имена (по одному на строку)."

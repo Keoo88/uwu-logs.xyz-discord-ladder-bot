@@ -30,15 +30,16 @@ def _int_list(value: str, default: List[int]) -> List[int]:
 @dataclass
 class Config:
     discord_token: str = os.getenv("DISCORD_TOKEN", "")
-    discord_guild_id: int = int(os.getenv("DISCORD_GUILD_ID") or 0)
+    # Один или несколько ID серверов через запятую (напр. "111,222").
+    discord_guild_ids: List[int] = field(
+        default_factory=lambda: [
+            int(x) for x in _split(os.getenv("DISCORD_GUILD_ID", "")) if x.strip().isdigit()
+        ]
+    )
 
     warmane_guild: str = os.getenv("WARMANE_GUILD", "RUnion")
     warmane_realm: str = os.getenv("WARMANE_REALM", "Icecrown")
     uwu_server: str = os.getenv("UWU_SERVER", "Icecrown")
-
-    raider_ranks: List[str] = field(
-        default_factory=lambda: [r.lower() for r in _split(os.getenv("RAIDER_RANKS", ""))]
-    )
 
     uwu_mode: str = os.getenv("UWU_MODE", "browser").strip().lower()
     uwu_specs: List[int] = field(
@@ -83,17 +84,6 @@ class Config:
     bestspec_file: str = os.getenv("BEST_SPECS_FILE", "best_specs.json")
     history_file: str = os.getenv("LADDER_HISTORY_FILE", "ladder_history.json")
     history_keep: int = int(os.getenv("LADDER_HISTORY_KEEP", "20"))
-
-    # Какие ранги считать raider+, если список не задан явно.
-    default_rank_keywords: List[str] = field(
-        default_factory=lambda: ["gm", "officer", "raider"]
-    )
-
-    def is_raider(self, rank_name: str) -> bool:
-        rank = (rank_name or "").lower()
-        if self.raider_ranks:
-            return any(rank == r or r in rank for r in self.raider_ranks)
-        return any(k in rank for k in self.default_rank_keywords)
 
 
 CONFIG = Config()

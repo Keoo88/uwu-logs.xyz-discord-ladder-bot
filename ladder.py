@@ -21,7 +21,7 @@ from uwu import RatingResult, fetch_best_ratings
 log = logging.getLogger("ladder")
 
 # Меняй при изменениях — по логу/ошибке видно, какая версия запущена.
-APP_VERSION = "2026-07-04.36-local (calmer greeting, pickaxe icon)"
+APP_VERSION = "2026-07-05.38-local (removed dead rank/raider code)"
 
 
 @dataclass
@@ -36,7 +36,6 @@ class LadderRow:
 class LadderResult:
     rows: List[LadderRow]
     total_members: int
-    raiders: int
     built_at: float
 
 
@@ -52,7 +51,6 @@ def _result_to_payload(result: "LadderResult", server: str) -> dict:
                 "prev_rank": r.prev_rank,
                 "name": r.member.name,
                 "class": r.member.class_name,
-                "rank_name": r.member.rank,
                 "rating": r.rating.rating,
                 "dps": r.rating.dps,
                 "spec": r.rating.spec,
@@ -72,7 +70,6 @@ def result_from_payload(data: dict) -> Optional["LadderResult"]:
             member = Member(
                 name=d["name"],
                 class_name=d.get("class", ""),
-                rank=d.get("rank_name", "Raider"),
             )
             res = RatingResult(
                 name=d["name"],
@@ -94,7 +91,6 @@ def result_from_payload(data: dict) -> Optional["LadderResult"]:
         return LadderResult(
             rows=rows,
             total_members=data.get("total_members", len(rows)),
-            raiders=data.get("total_members", len(rows)),
             built_at=data.get("built_at", 0.0),
         )
     except Exception as e:  # noqa: BLE001
@@ -178,7 +174,6 @@ async def build_ladder(cfg: Config, disk: DiskStore, full: bool = False) -> Ladd
     result = LadderResult(
         rows=rows,
         total_members=len(members),
-        raiders=len(members),
         built_at=time.time(),
     )
 
